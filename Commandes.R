@@ -1,43 +1,22 @@
 #####################################
-#####################################
-###  Version 2015-01-06
-###
-###
-#####################################
+###  Version 2023-01-06
+#three required arguments to the function
+# "Exons.txt" Avoir la liste des exons avec les positions.
+# "SNPs.txt" Avoir la liste des SNPs avec leur position sur le B37/38.
+# figure  Le nom de la figure
 
 
-#####################################
-#####################################
-###  Étape 1: Avoir la liste des exons avec les positions.
-
-# "Exons.txt"
-
-#####################################
+#function 
+pwp_syn_nonsyn = function(snps_file = "input/SNPs.txt", exons_file = "input/Exons.txt" , figure = paste0("output/SERPINA1-PWP_",Sys.Date(),".png")) {
 
 
-#####################################
-#####################################
-###  Étape 2: Avoir la liste des SNPs avec leur position sur le B37/38.
-
-# "SNPs.txt"
-
-#####################################
-
-
-#####################################
-#####################################
-###  Étape 3: Graphique
-
-snps <- read.table("SNPs.txt", header = T, sep = "\t", stringsAsFactors = F)
-exons <- read.table("Exons.txt", header = T, sep = "\t")
+snps <- read.table(snps_file, header = T, sep = "\t", stringsAsFactors = F)
+exons <- read.table(exons_file, header = T, sep = "\t")
 
 snps.order <- snps[order(snps$SNP.Position, decreasing = T) , ]
 
-###
-###
-###
 
-png("SERPINA1-PWP_2015-01-07.png", height = 3840, width = 5120, pointsize = 75)
+png(figure, height = 3840, width = 5120, pointsize = 75)
 
 par(mar = c(6,0,0,0))
 plot(x=0,y=0, xlim = c(94857029, 94843083), ylim = c(0,15), xaxt = "n", yaxt = "n", xlab = "", ylab = "", main = "", cex.lab = 1.5)
@@ -55,23 +34,17 @@ mtext("Chromosome 14 (kb)", 1, cex = 1.5, line = 4)
 
 
 ## Exons #darkgrey = non codant
-rect(exons$Exon.End[1], 3, exons$Exon.Start[1], 0, col = "darkgrey", border = NA)
-rect(exons$Exon.End[2], 3, exons$Exon.Start[2], 0, col = "black", border = NA)
-rect(exons$Exon.End[3], 3, exons$Exon.Start[3], 0, col = "black", border = NA)
-rect(exons$Exon.End[4], 3, exons$Exon.Start[4], 0, col = "black", border = NA)
-rect(exons$Exon.End[5], 3, exons$Exon.Start[5], 0, col = "black", border = NA)
-rect(exons$Exon.End[6], 3, exons$Exon.Start[6], 0, col = "black", border = NA)
-rect(exons$Exon.End[7], 3, exons$Exon.Start[7], 0, col = "black", border = NA)
-rect(exons$Exon.End[8], 3, exons$Exon.Start[8], 0, col = "black", border = NA)
+for(i in seq_along(exons$Exon.Start))
+{
+   if(i ==1) rect(exons$Exon.End[i], 3, exons$Exon.Start[i], 0, col = "darkgrey", border = NA)
+   if(i!= 1) rect(exons$Exon.End[i], 3, exons$Exon.Start[i], 0, col = "black", border = NA)
 
-text((((exons$Exon.End[1]-exons$Exon.Start[1])/2)+exons$Exon.Start[1]), -0.3, "1a", cex = 1.5)
-text((((exons$Exon.End[2]-exons$Exon.Start[2])/2)+exons$Exon.Start[2])+50, -0.3, "1b", cex = 1.5)
-text((((exons$Exon.End[3]-exons$Exon.Start[3])/2)+exons$Exon.Start[3])-50, -0.3, "1c", cex = 1.5)
-text((((exons$Exon.End[4]-exons$Exon.Start[4])/2)+exons$Exon.Start[4]), -0.3, "2", cex = 1.5)
-text((((exons$Exon.End[5]-exons$Exon.Start[5])/2)+exons$Exon.Start[5]), -0.3, "3", cex = 1.5)
-text((((exons$Exon.End[6]-exons$Exon.Start[6])/2)+exons$Exon.Start[6]), -0.3, "4", cex = 1.5)
-text((((exons$Exon.End[8]-exons$Exon.Start[7])/2)+exons$Exon.Start[7]), -0.3, "5", cex = 1.5)
-
+   if((i!=2) & (i!=3)) spacer = 0 
+   if(i==2)  spacer = 50
+   if(i==3)  spacer = -50 
+  
+  text((((exons$Exon.End[i]-exons$Exon.Start[i])/2)+exons$Exon.Start[i])+spacer, -0.3, exons$Exon.Name[i], cex = 1.5)
+}
 
 ## SNPs-Position sur ligne de base
 for (i in 1:nrow(snps.order))
@@ -92,4 +65,9 @@ for (i in 1:nrow(snps.order))
 
 dev.off()
 
-#####################################
+message(paste0('Done preparing figure ',figure,' --- Time is: ',Sys.time()))
+
+}
+
+#Run the function below...
+pwp_syn_nonsyn()
