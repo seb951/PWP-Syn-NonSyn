@@ -1,6 +1,6 @@
 ### PWP-Syn-NonSyn
-  * gene - dna figure (r-based)
-  * 06-03-2023
+  * This is a gene structure (DNA & SNPs) figure (R-based)
+  * Originally built in Yohan Bossé lab in 2015.
 
 ### Example (default parameters) 
 ```
